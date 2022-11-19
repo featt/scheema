@@ -14,7 +14,9 @@ import {
 import { COMPRESSOR_IMG, WATER_FILTER } from "../utils/constants";
 
 const Sidebar = () => {
-  const onDragStart = (event: any, nodeType: any) => {
+  const onDragStart = (event: any, nodeType: any, flag: string, name: string) => {
+    event.dataTransfer.setData('url', flag)
+    event.dataTransfer.setData('name', name)
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
   };
@@ -33,8 +35,8 @@ const Sidebar = () => {
           </h2>
           <AccordionPanel>
             <HStack spacing={8}>
-              <Image src={WATER_FILTER} maxW='80px' maxH='80px' onDragStart={(event) => onDragStart(event, 'custom')} />
-              <Image src={COMPRESSOR_IMG} maxW='80px' maxH='80px'  onDragStart={(event) => onDragStart(event, 'custom')} />      
+              <Image src={WATER_FILTER} maxW='80px' maxH='80px' onDragStart={(event) => onDragStart(event, 'custom', WATER_FILTER, 'filter')} />
+              <Image src={COMPRESSOR_IMG} maxW='80px' maxH='80px'  onDragStart={(event) => onDragStart(event, 'custom', COMPRESSOR_IMG, 'compressor')} />      
             </HStack>
           </AccordionPanel>
         </AccordionItem>

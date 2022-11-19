@@ -21,6 +21,7 @@ import { COMPRESSOR_IMG, WATER_FILTER } from "../utils/constants";
 
 interface IData {
   name: string;
+  url: string;
 }
 
 interface CustomNodeProps {
@@ -44,12 +45,6 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
     setCurrNode(props.id);
   };
 
-  const handleImg = () => {
-    if(props.data.name === 'compressor') {
-        return COMPRESSOR_IMG
-    }
-    return WATER_FILTER
-  }
 
   return (
     <HStack
@@ -61,7 +56,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
       bgRepeat="no-repeat"
       h="150px"
       border='1px'      
-      bgImage={handleImg}
+      bgImage={props?.data?.url}
       rounded={"lg"}
       onClick={hendleClick}
     >
@@ -69,7 +64,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">
-            Add props on {currNode} Node
+            Add props on {props.data.name} Node
           </DrawerHeader>
           <DrawerBody>
             <InputGroup mb="10px">
@@ -93,8 +88,17 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>      
-      <Handle type="source" position={Position.Left} />
-      <Handle type="target" position={Position.Right} />
+      {props.data.name === 'filter' ? (
+        <>
+            <Handle type="source" position={Position.Left} />
+            <Handle type="target" position={Position.Right} />
+        </>
+      ) : (
+        <>
+            <Handle type="source" position={Position.Top} />
+            <Handle type="target" position={Position.Bottom} />
+        </>
+      )}
     </HStack>
   );
 };

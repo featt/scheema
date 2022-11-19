@@ -15,20 +15,6 @@ import Sidebar from './Sidebar';
 import './dnd.css'
 import CustomNode from './CustomNode';
 
-const initNodes = [
-    {
-      id: "1",
-      type: "custom",
-      data: { name: "filter" },
-      position: { x: 0, y: 50 },
-    },
-    {
-      id: "2",
-      type: "custom",
-      data: { name: "compressor" },  
-      position: { x: -200, y: 200 },
-    },
-];
 
 const nodeTypes = {
     custom: CustomNode,
@@ -39,7 +25,7 @@ const nodeTypes = {
   
   const CustomDNDFlow = () => {
     const reactFlowWrapper = useRef<any>(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState<any>(initNodes);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
   
@@ -56,7 +42,9 @@ const nodeTypes = {
   
         const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
         const type = event.dataTransfer.getData('application/reactflow');
-
+        const url = event.dataTransfer.getData('url');
+        const name = event.dataTransfer.getData('name');
+        
         
         // check if the dropped element is valid
         if (typeof type === 'undefined' || !type) {
@@ -71,7 +59,7 @@ const nodeTypes = {
           id: getId(),
           type,
           position,
-          data: { name: `${type} node` },
+          data: { name, url },
         };
   
         setNodes((nds) => nds.concat(newNode));
