@@ -1,9 +1,11 @@
 import { Flex } from '@chakra-ui/react';
+import { FC } from 'react';
 import ReactFlow, { Background, MiniMap, ReactFlowProvider, useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
 import edges from '../store/edges'
 import nodes from '../store/nodes'
 import './button.css';
+import CustomNode from './CustomNode';
 
 const edgeOptions = {
   animated: true,
@@ -13,9 +15,8 @@ const edgeOptions = {
 };
 
 const connectionLineStyle = { stroke: 'white' };
-console.log(nodes);
 
-function Flow() {
+const Flow: FC = () => {
   return (
     <Flex w='100%'>
       <ReactFlow
