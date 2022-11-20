@@ -18,6 +18,12 @@ import edges from "./edges";
 type RFState = {
     nodes: Node[];
     edges: Edge[];
+    currentNodeId: string;
+    setCurrentNodeId: (id: string) => void;
+    first: number;
+    second: number;
+    setFirst: (x: number) => void;
+    setSecond: (y: number) => void;
     onNodesChange: OnNodesChange;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
@@ -26,7 +32,24 @@ type RFState = {
 const useStore = create<RFState>((set, get) => ({
     nodes: nodes,
     edges: edges,   
-   
+    currentNodeId: '', 
+    first: 0,
+    second: 0,
+    setFirst: (x) => {
+      set({
+        first: x
+      })
+    },
+    setSecond(y) {
+        set({
+          second: y
+        })
+    },
+    setCurrentNodeId: (id: string) => {
+      set({
+        currentNodeId: id
+      })
+    },
     onNodesChange: (changes: NodeChange[]) => {
         set({
           nodes: applyNodeChanges(changes, get().nodes),

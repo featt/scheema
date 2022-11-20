@@ -4,7 +4,7 @@ export default [
   {
     id: '1',
     type: 'input',
-    data: { label: 'Node 1' },
+    data: { name: 'filter', props: {x: 5, y: 6}, result: {} },
     position: { x: 250, y: 25 },   
   },
 

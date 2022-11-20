@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -9,11 +9,13 @@ import ReactFlow, {
   Edge,
   Background,
   MiniMap,
+  Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
 import './dnd.css'
 import CustomNode from './CustomNode';
+import useStore from '../store/useStore';
 
 
 const nodeTypes = {
@@ -21,13 +23,41 @@ const nodeTypes = {
 };
   
   let id = 0;
-  const getId = () => `dndnode_${id++}`;
+  const getId = () => `${++id}`;
   
   const CustomDNDFlow = () => {
+    const currNodeId = useStore(state => state.currentNodeId)
+    const first = useStore(state => state.first)
+    const second = useStore(state => state.second)
+    const setX = useStore(state => state.setFirst)
+    const setY = useStore(state => state.setSecond)
     const reactFlowWrapper = useRef<any>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
+    console.log(currNodeId);
+    console.log(nodes);   
+    
+    useEffect(() => {
+      //@ts-ignore
+      setNodes((prev) => prev.map(node => {
+        if(node?.id === currNodeId) {
+          node.data = {
+            ...node?.data,
+            props: {
+              x: first,
+              y: second
+            },
+            result: {
+              res: first + second
+            }
+          }
+          return node
+        }
+      }))
+      console.log(nodes);
+      
+    }, [currNodeId, setNodes, first, second])
   
     const onConnect = useCallback((params: Edge<any> | Connection) => setEdges((eds) => addEdge(params, eds)), []);
   
@@ -59,7 +89,7 @@ const nodeTypes = {
           id: getId(),
           type,
           position,
-          data: { name, url },
+          data: { name, url, props: {x: 0, y: 0}, result: { res: 0 } },
         };
   
         setNodes((nds) => nds.concat(newNode));
@@ -83,6 +113,7 @@ const nodeTypes = {
               onDragOver={onDragOver}
               fitView
             >
+              <Background/>
               <Controls />
             </ReactFlow>
           </div>
