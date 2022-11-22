@@ -54,6 +54,7 @@ const nodeTypes = {
           }
           return node
         }
+        return node
       }))
       console.log(nodes);
       

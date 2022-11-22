@@ -43,8 +43,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
   let curr = nodes.filter((node) => node.id === currNode)[0];
   console.log(currentNodeId);
   console.log(firstProp);
-  
-  
+
   const hendleClick = (e: any) => {
     //@ts-ignore
     onOpen(e.target.value);
