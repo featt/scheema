@@ -45,10 +45,12 @@ const nodeTypes = {
           node.data = {
             ...node?.data,
             props: {
+              ...node?.data?.props,
               x: first,
               y: second
             },
             result: {
+              ...node?.data?.result,
               res: first + second
             }
           }
