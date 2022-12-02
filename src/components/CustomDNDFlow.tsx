@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useContext } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -10,13 +10,13 @@ import ReactFlow, {
   Background,
   MiniMap,
   Node,
+  useReactFlow
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
-import './dnd.css'
+import '../styles/dnd.css'
 import CustomNode from './CustomNode';
 import useStore from '../store/useStore';
-
 
 const nodeTypes = {
     custom: CustomNode,
@@ -27,41 +27,34 @@ const nodeTypes = {
   
   const CustomDNDFlow = () => {
     const currNodeId = useStore(state => state.currentNodeId)
-    const first = useStore(state => state.first)
-    const second = useStore(state => state.second)
-    const setX = useStore(state => state.setFirst)
-    const setY = useStore(state => state.setSecond)
     const reactFlowWrapper = useRef<any>(null);
+    const options = useStore(state => state.options)
+    const setOptions = useStore(state => state.setOptions)
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
-    console.log(currNodeId);
-    console.log(nodes);   
     
     useEffect(() => {
-      //@ts-ignore
-      setNodes((prev) => prev.map(node => {
+      setNodes((prev: Node[]) => prev.map((node: Node) => {
         if(node?.id === currNodeId) {
           node.data = {
             ...node?.data,
             props: {
-              ...node?.data?.props,
-              x: first,
-              y: second
+              ...node?.data?.props,  
+              ...options            
             },
             result: {
               ...node?.data?.result,
-              res: first + second
+              res: 5
             }
           }
           return node
         }
         return node
-      }))
-      console.log(nodes);
-      
-    }, [currNodeId, setNodes, first, second])
-  
+      }))  
+    }, [currNodeId, setNodes, options])
+    console.log(nodes);
+    
     const onConnect = useCallback((params: Edge<any> | Connection) => setEdges((eds) => addEdge(params, eds)), []);
   
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
@@ -92,7 +85,7 @@ const nodeTypes = {
           id: getId(),
           type,
           position,
-          data: { name, url, props: {x: 0, y: 0}, result: { res: 0 } },
+          data: { name, url, props: {}, result: { res: 0 } },
         };
   
         setNodes((nds) => nds.concat(newNode));

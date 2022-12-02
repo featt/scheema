@@ -19,11 +19,9 @@ type RFState = {
     nodes: Node[];
     edges: Edge[];
     currentNodeId: string;
+    options: any;
+    setOptions: (options: any) => void;
     setCurrentNodeId: (id: string) => void;
-    first: number;
-    second: number;
-    setFirst: (x: number) => void;
-    setSecond: (y: number) => void;
     onNodesChange: OnNodesChange;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
@@ -33,18 +31,8 @@ const useStore = create<RFState>((set, get) => ({
     nodes: nodes,
     edges: edges,   
     currentNodeId: '', 
-    first: 0,
-    second: 0,
-    setFirst: (x) => {
-      set({
-        first: x
-      })
-    },
-    setSecond(y) {
-        set({
-          second: y
-        })
-    },
+    options: {},
+    setOptions: (options: any) => set((state) => ({ options: state.options = options })),
     setCurrentNodeId: (id: string) => {
       set({
         currentNodeId: id

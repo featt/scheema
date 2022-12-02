@@ -13,12 +13,13 @@ import {
   InputGroup,
   InputLeftAddon,
   useDisclosure,
+  Box,
 } from "@chakra-ui/react";
 import { Handle, Position } from "reactflow";
-import React, { memo, useEffect, useState } from "react";
-import nodes from "../store/nodes";
-import { COMPRESSOR_IMG, WATER_FILTER } from "../utils/constants";
+import React, { memo, useEffect, useState, createContext, useReducer } from "react";
 import useStore from "../store/useStore";
+import { useInput } from "../hooks/useInput";
+
 
 interface IData {
   name: string;
@@ -31,47 +32,48 @@ interface CustomNodeProps {
   data: IData;
 }
 
-const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
-  const currentNodeId = useStore(state => state.currentNodeId)
-  const setCurrnetNodeId = useStore<any>(state => state.setCurrentNodeId)
-  const setX = useStore(state => state.setFirst)
-  const setY = useStore(state => state.setSecond)
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [currNode, setCurrNode] = useState<string | undefined>("");
-  const [firstProp, setFirstProp] = useState<string | any>("");
-  const [secondProp, setSecondProp] = useState<string | any>("");
-  let curr = nodes.filter((node) => node.id === currNode)[0];
-  console.log(currentNodeId);
-  console.log(firstProp);
 
+const Comp = {x: 0, y: 0, z: 0}
+const filter = {PI: Math.PI, e: Math.E, log: Math.log}
+const elements = [['compressor', Comp], ['filter', filter]]
+
+
+const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
+  const { values, onChange, setValues } = useInput(Comp)
+  const setCurrnetNodeId = useStore<any>(state => state.setCurrentNodeId)
+  const setOptions = useStore<any>(state => state.setOptions)
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const hendleClick = (e: any) => {
     //@ts-ignore
     onOpen(e.target.value);
-    setCurrnetNodeId(props?.id);    
+    setCurrnetNodeId(props?.id);   
+    setValues((getStateFromElements(props?.data?.name)))
+    console.log((getStateFromElements(props?.data?.name))); 
+    console.log(Object.entries(values).map(([key, value]) => (value)));    
   };
-
-  useEffect(() => {
-    console.log(props.data.name);
-    
-  }, [props.data])
-
-  const handleCalc = () => {
-    if(currentNodeId) {
-      setX(firstProp)
-      setY(secondProp)
+  
+  const getStateFromElements = (name: string) => {
+    for(let i = 0; i < elements.length; i++) {
+      if(elements[i][0] === name) {
+        return elements[i][1]
+      }
     }
   }
 
+  const onSubmit = () => {
+    setOptions(values);   
+    onClose();    
+  }
+
   return (
-    <HStack
-      justifyContent={"space-between"}      
-      w="260px"
+    <Box     
+      w="220px"
       bgPosition="center"
       bgRepeat="no-repeat"
-      h="150px"
-      border='1px'      
-      bgImage={props?.data?.url}
-      rounded={"lg"}
+      bgSize='250px'
+      h="170px"
+      mt='9px'            
+      bgImage={props?.data?.url} 
       onClick={hendleClick}
     >
       <Drawer placement={"bottom"} onClose={onClose} isOpen={isOpen}>
@@ -81,43 +83,36 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
             Add props on {props?.data?.name} Node
           </DrawerHeader>
           <DrawerBody>
-            <InputGroup mb="10px">
-              <InputLeftAddon children="X:" />
-              <Input
-                value={firstProp}
-                onChange={(e) => setFirstProp(+e?.target?.value)}
-                type="number"
-                placeholder="Type x..."
-              />
-            </InputGroup>
-            <InputGroup mb="10px">
-              <InputLeftAddon children="Y:" />
-              <Input
-                value={secondProp}
-                onChange={(e) => setSecondProp(+e?.target?.value)}
-                type="number"
-                placeholder="Type y..."
-              />
-            </InputGroup>
+            {Object.entries(values).map(([key, value]) => (
+              <InputGroup key={key} mb="10px">
+              <InputLeftAddon children={key} />
+                <Input
+                  // @ts-ignore
+                  value={value}
+                  onChange={(e) => onChange(e, key.toString())}
+                  type="number"
+                  placeholder={`Type ${key} value`}
+                />
+              </InputGroup> 
+            ))}           
             <HStack justifyContent='space-between'>
-              <Button onClick={handleCalc} bg='green' w='100px'>Calc</Button>
-              <Text>⬅️ Result</Text>
+              <Button onClick={onSubmit} bg='green' w='100px'>Calc</Button>              
             </HStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>      
       {props.data.name === 'filter' ? (
         <>
-            <Handle type="source" position={Position.Left} />
-            <Handle type="target" position={Position.Right} />
+            <Handle type="source" position={Position.Left} style={{ height: 10, width: 10 }} />
+            <Handle onConnect={e => console.log('asdas')} type="target" position={Position.Right} style={{ height: 10, width: 10 }} />
         </>
       ) : (
         <>
-            <Handle type="source" position={Position.Top} />
-            <Handle type="target" position={Position.Bottom} />
+            <Handle onConnect={e => console.log(e.sourceHandle)} type="source" position={Position.Top} style={{ height: 10, width: 10 }} />
+            <Handle type="target" position={Position.Bottom} style={{ height: 10, width: 10 }} />
         </>
       )}
-    </HStack>
+    </Box>
   );
 };
 
