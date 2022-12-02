@@ -34,6 +34,12 @@ const nodeTypes = {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     
+
+    useEffect(() => {
+      const {PI, e} = options
+      console.log(PI, e);      
+    }, [options])
+
     useEffect(() => {
       setNodes((prev: Node[]) => prev.map((node: Node) => {
         if(node?.id === currNodeId) {
@@ -45,7 +51,7 @@ const nodeTypes = {
             },
             result: {
               ...node?.data?.result,
-              res: 5
+              res: 3
             }
           }
           return node
