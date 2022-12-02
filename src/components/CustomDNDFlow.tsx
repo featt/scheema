@@ -52,6 +52,7 @@ const nodeTypes = {
         }
         return node
       }))  
+
     }, [currNodeId, setNodes, options])
     console.log(nodes);
     

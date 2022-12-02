@@ -39,7 +39,7 @@ const elements = [['compressor', Comp], ['filter', filter]]
 
 
 const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
-  const { values, onChange, setValues } = useInput(Comp)
+  const { values, onChange, setValues } = useInput({})
   const setCurrnetNodeId = useStore<any>(state => state.setCurrentNodeId)
   const setOptions = useStore<any>(state => state.setOptions)
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,9 +47,8 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
     //@ts-ignore
     onOpen(e.target.value);
     setCurrnetNodeId(props?.id);   
-    setValues((getStateFromElements(props?.data?.name)))
-    console.log((getStateFromElements(props?.data?.name))); 
-    console.log(Object.entries(values).map(([key, value]) => (value)));    
+    setValues((getStateFromElements(props?.data?.name)))    
+    setOptions({});
   };
   
   const getStateFromElements = (name: string) => {
@@ -61,7 +60,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
   }
 
   const onSubmit = () => {
-    setOptions(values);   
+    setOptions(values);
     onClose();    
   }
 
