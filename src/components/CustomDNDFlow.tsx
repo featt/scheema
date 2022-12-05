@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect, useContext } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -8,9 +8,8 @@ import ReactFlow, {
   Connection,
   Edge,
   Background,
-  MiniMap,
   Node,
-  useReactFlow
+  ConnectionLineType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
@@ -21,7 +20,7 @@ import useStore from '../store/useStore';
 const nodeTypes = {
     custom: CustomNode,
 };
-  
+
   let id = 0;
   const getId = () => `${++id}`;
   
@@ -29,16 +28,18 @@ const nodeTypes = {
     const currNodeId = useStore(state => state.currentNodeId)
     const reactFlowWrapper = useRef<any>(null);
     const options = useStore(state => state.options)
-    const setOptions = useStore(state => state.setOptions)
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     
-
-    useEffect(() => {
-      const {PI, e} = options
-      console.log(PI, e);      
-    }, [options])
+    function count(options: any) {
+      let result = 0;
+      for (const key of Object.keys(options)) {
+        const value = options[key];
+        result += value
+      }
+      return result;
+    }
 
     useEffect(() => {
       setNodes((prev: Node[]) => prev.map((node: Node) => {
@@ -51,7 +52,7 @@ const nodeTypes = {
             },
             result: {
               ...node?.data?.result,
-              res: 3
+              res: count(options)
             }
           }
           return node
@@ -60,9 +61,8 @@ const nodeTypes = {
       }))  
 
     }, [currNodeId, setNodes, options])
-    console.log(nodes);
     
-    const onConnect = useCallback((params: Edge<any> | Connection) => setEdges((eds) => addEdge(params, eds)), []);
+    const onConnect = useCallback((params: Edge<any> | Connection) => setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.Step}, eds)), []);
   
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
       event.preventDefault();
@@ -92,7 +92,7 @@ const nodeTypes = {
           id: getId(),
           type,
           position,
-          data: { name, url, props: {}, result: { res: 0 } },
+          data: { name, url, props: {}, result: { res: -123 } },
         };
   
         setNodes((nds) => nds.concat(newNode));
@@ -113,6 +113,7 @@ const nodeTypes = {
               onConnect={onConnect}
               onInit={setReactFlowInstance}
               onDrop={onDrop}
+              connectionLineType={ConnectionLineType.Step}
               onDragOver={onDragOver}
               fitView
             >

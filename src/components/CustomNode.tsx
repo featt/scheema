@@ -1,22 +1,19 @@
 import {
   Button,
-  Center,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Flex,
   HStack,
-  Text,
   Input,
   InputGroup,
   InputLeftAddon,
   useDisclosure,
   Box,
 } from "@chakra-ui/react";
-import { Handle, Position } from "reactflow";
-import React, { memo, useEffect, useState, createContext, useReducer } from "react";
+import { Connection, Handle, Position } from "reactflow";
+import React, { memo } from "react";
 import useStore from "../store/useStore";
 import { useInput } from "../hooks/useInput";
 
@@ -64,6 +61,20 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
     onClose();    
   }
 
+  function check() {
+    //@ts-ignore
+    if (props.data?.result?.res != -123) {
+          //@ts-ignore
+      return <h1><br></br><br></br><br></br><br></br><br></br><br></br><br></br>Результат: {props.data?.result?.res} </h1>
+    }
+  }
+
+  function moveResFromSrcToTarget(e: Connection) {
+    let res = nodes[e.source].src.res
+    nodes[e.target] = res;   
+
+  }
+
   return (
     <Box     
       w="220px"
@@ -79,7 +90,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">
-            Add props on {props?.data?.name} Node
+            Внесение параметров в элемент: {props?.data?.name}
           </DrawerHeader>
           <DrawerBody>
             {Object.entries(values).map(([key, value]) => (
@@ -95,7 +106,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
               </InputGroup> 
             ))}           
             <HStack justifyContent='space-between'>
-              <Button onClick={onSubmit} bg='green' w='100px'>Calc</Button>              
+              <Button onClick={onSubmit} bg='green' w='100px'>Вычислить</Button>              
             </HStack>
           </DrawerBody>
         </DrawerContent>
@@ -103,14 +114,17 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
       {props.data.name === 'filter' ? (
         <>
             <Handle type="source" position={Position.Left} style={{ height: 10, width: 10 }} />
-            <Handle onConnect={e => console.log('asdas')} type="target" position={Position.Right} style={{ height: 10, width: 10 }} />
+            <Handle onConnect={e => moveResFromSrcToTarget(e)} type="target" position={Position.Right} style={{ height: 10, width: 10 }} />
         </>
       ) : (
         <>
-            <Handle onConnect={e => console.log(e.sourceHandle)} type="source" position={Position.Top} style={{ height: 10, width: 10 }} />
-            <Handle type="target" position={Position.Bottom} style={{ height: 10, width: 10 }} />
+            <Handle type="source" position={Position.Top} style={{ height: 10, width: 10 }} />
+            <Handle onConnect={e => moveResFromSrcToTarget(e)} type="target" position={Position.Bottom} style={{ height: 10, width: 10 }} />
         </>
       )}
+      
+      {check()}
+
     </Box>
   );
 };

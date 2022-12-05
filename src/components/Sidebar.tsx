@@ -3,8 +3,6 @@ import {
   AccordionButton,
   AccordionIcon,
   AccordionItem,
-  Button,
-  Card,
   Image,
   VStack,
   Box,
@@ -28,7 +26,7 @@ const Sidebar = () => {
           <h2>
             <AccordionButton>
               <Box flex="1" textAlign="left">
-                Group one
+                Тестовая группа элементов
               </Box>
               <AccordionIcon />
             </AccordionButton>
