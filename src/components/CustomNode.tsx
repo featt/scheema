@@ -70,9 +70,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
   }
 
   function moveResFromSrcToTarget(e: Connection) {
-    let res = nodes[e.source].src.res
-    nodes[e.target] = res;   
-
+    console.log(e);    
   }
 
   return (
@@ -113,12 +111,12 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
       </Drawer>      
       {props.data.name === 'filter' ? (
         <>
-            <Handle type="source" position={Position.Left} style={{ height: 10, width: 10 }} />
+            <Handle onConnect={e => moveResFromSrcToTarget(e)} type="source" position={Position.Left} style={{ height: 10, width: 10 }} />
             <Handle onConnect={e => moveResFromSrcToTarget(e)} type="target" position={Position.Right} style={{ height: 10, width: 10 }} />
         </>
       ) : (
         <>
-            <Handle type="source" position={Position.Top} style={{ height: 10, width: 10 }} />
+            <Handle onConnect={e => moveResFromSrcToTarget(e)} type="source" position={Position.Top} style={{ height: 10, width: 10 }} />
             <Handle onConnect={e => moveResFromSrcToTarget(e)} type="target" position={Position.Bottom} style={{ height: 10, width: 10 }} />
         </>
       )}
