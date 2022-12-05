@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -31,9 +31,20 @@ const nodeTypes = {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
+    const [edgesAndTarget, setEdgesAndTArget] = useState<any>()
     
-    console.log(edges);
-    
+    useEffect(() => {
+      const edgesAndTArget = edges.map(edge => {
+        return {
+          target: edge.target,
+          source: edge.source
+        }
+      });
+      setEdgesAndTArget(edgesAndTArget)
+      const target = (nodes.filter(node => node?.id == edgesAndTarget[0]?.target));
+      const source = (nodes.filter(node => node?.id == edgesAndTarget[0]?.source));
+    }, [edges])   
+
     function count(options: any) {
       let result = 0;
       for (const key of Object.keys(options)) {
