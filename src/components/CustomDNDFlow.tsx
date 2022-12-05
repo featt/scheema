@@ -40,10 +40,11 @@ const nodeTypes = {
           source: edge.source
         }
       });
-      setEdgesAndTArget(edgesAndTArget)
-      const target = (nodes.filter(node => node?.id == edgesAndTarget[0]?.target));
-      const source = (nodes.filter(node => node?.id == edgesAndTarget[0]?.source));
+      setEdgesAndTArget(edgesAndTArget)      
     }, [edges])   
+
+    const target = (nodes.filter(node => node?.id == edgesAndTarget[0]?.target));
+    const source = (nodes.filter(node => node?.id == edgesAndTarget[0]?.source));
 
     function count(options: any) {
       let result = 0;
@@ -65,7 +66,10 @@ const nodeTypes = {
             },
             result: {
               ...node?.data?.result,
-              res: count(options)
+              res: {
+                currRes: count(options),
+                prevRes: 0
+              }
             }
           }
           return node
