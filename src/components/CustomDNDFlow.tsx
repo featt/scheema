@@ -32,6 +32,8 @@ const nodeTypes = {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     
+    console.log(edges);
+    
     function count(options: any) {
       let result = 0;
       for (const key of Object.keys(options)) {
