@@ -39,8 +39,8 @@ const nodeTypes = {
       for (const key of Object.keys(options)) {
         const value = options[key];
         result += value
-        result += prev ? prev[0] : 0
       }
+      result += prev ? prev[0] : 0
       return result;
     }
 

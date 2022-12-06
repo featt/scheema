@@ -7,8 +7,10 @@ import {
   VStack,
   Box,
   AccordionPanel,
-  HStack
+  HStack,
+  Button
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { COMPRESSOR_IMG, WATER_FILTER } from "../utils/constants";
 
 const Sidebar = () => {
@@ -18,6 +20,8 @@ const Sidebar = () => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
   };
+
+  const navigate = useNavigate()
 
   return (
     <VStack color="white" w="20%" bg="#191A23">
@@ -39,6 +43,7 @@ const Sidebar = () => {
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
+      <Button onClick={() => navigate('/login')} color='black'>Log out</Button>
     </VStack>
   );
 };
