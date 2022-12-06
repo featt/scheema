@@ -31,26 +31,15 @@ const nodeTypes = {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
-    const [edgesAndTarget, setEdgesAndTArget] = useState<any>()
+    const [connectStatus, setConnectStatus] = useState(false);
+    console.log(nodes);     
     
-    useEffect(() => {
-      const edgesAndTArget = edges.map(edge => {
-        return {
-          target: edge.target,
-          source: edge.source
-        }
-      });
-      setEdgesAndTArget(edgesAndTArget)      
-    }, [edges])   
-
-    const target = (nodes.filter(node => node?.id == edgesAndTarget[0]?.target));
-    const source = (nodes.filter(node => node?.id == edgesAndTarget[0]?.source));
-
-    function count(options: any) {
+    function count(options: any, prev: any) {
       let result = 0;
       for (const key of Object.keys(options)) {
         const value = options[key];
         result += value
+        result += prev ? prev[0] : 0
       }
       return result;
     }
@@ -66,20 +55,23 @@ const nodeTypes = {
             },
             result: {
               ...node?.data?.result,
-              res: {
-                currRes: count(options),
-                prevRes: 0
-              }
-            }
+              res: count(options, node?.data?.prev)
+            },
+            prev: connectStatus ? prev.map((node: Node) => node?.data?.result?.res) : 0
           }
           return node
         }
         return node
       }))  
 
-    }, [currNodeId, setNodes, options])
-    
-    const onConnect = useCallback((params: Edge<any> | Connection) => setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.Step}, eds)), []);
+    }, [currNodeId, setNodes, options, setConnectStatus, connectStatus])
+
+
+    const onConnect = useCallback((params: Edge<any> | Connection) => {
+      setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.Step}, eds))
+      console.log('connect');
+      setConnectStatus(true)      
+    }, [setEdges]);
   
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
       event.preventDefault();
