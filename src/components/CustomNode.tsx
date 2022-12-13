@@ -12,13 +12,16 @@ import {
   useDisclosure,
   Box,
 } from "@chakra-ui/react";
-import { Connection, Handle, Position } from "reactflow";
+import { Handle, Position } from "reactflow";
 import React, { memo } from "react";
 import useStore from "../store/useStore";
 import { useInput } from "../hooks/useInput";
+import { getStateFromElements } from "../utils/helpers";
+import { elements } from "../utils/elements";
 
 
 interface IData {
+  [x: string]: any;
   name: string;
   url: string;
 }
@@ -29,32 +32,18 @@ interface CustomNodeProps {
   data: IData;
 }
 
-
-const Comp = {x: 0, y: 0, z: 0}
-const filter = {PI: Math.PI, e: Math.E, log: Math.log}
-const elements = [['compressor', Comp], ['filter', filter]]
-
-
 const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
   const { values, onChange, setValues } = useInput({})
   const setCurrnetNodeId = useStore<any>(state => state.setCurrentNodeId)
   const setOptions = useStore<any>(state => state.setOptions)
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const hendleClick = (e: any) => {
-    //@ts-ignore
-    onOpen(e.target.value);
+
+  const hendleClick = () => {
+    onOpen();
     setCurrnetNodeId(props?.id);   
-    setValues((getStateFromElements(props?.data?.name)))    
+    setValues((getStateFromElements(props?.data?.name, elements)))    
     setOptions({});
-  };
-  
-  const getStateFromElements = (name: string) => {
-    for(let i = 0; i < elements.length; i++) {
-      if(elements[i][0] === name) {
-        return elements[i][1]
-      }
-    }
-  }
+  };  
 
   const onSubmit = () => {
     setOptions(values);
@@ -62,9 +51,7 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
   }
 
   function check() {
-    //@ts-ignore
     if (props.data?.result?.res != -123) {
-          //@ts-ignore
       return <h1><br></br><br></br><br></br><br></br><br></br><br></br><br></br>Результат: {props.data?.result?.res} </h1>
     }
   }
@@ -91,10 +78,13 @@ const CustomNode: React.FC<CustomNodeProps> = (props: CustomNodeProps) => {
               <InputGroup key={key} mb="10px">
               <InputLeftAddon children={key} />
                 <Input
-                  // @ts-ignore
-                  value={value}
-                  onChange={(e) => onChange(e, key.toString())}
                   type="number"
+                  // @ts-ignore
+                  value={value === null ? '' : value}
+                  onChange={(e) => {
+                    onChange(e, key.toString())
+                    console.log(value);                    
+                  }}
                   placeholder={`Type ${key} value`}
                 />
               </InputGroup> 
